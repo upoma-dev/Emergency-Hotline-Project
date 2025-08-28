@@ -157,38 +157,91 @@
             { id: 'rail', icon: '🚨', nameBn: 'Bangladesh Railway Helpline', nameEn: 'Bangladesh Railway Helpline', number: '163', category: 'Travel' },
         ];
         // ====== State ======
-    let coins = 100;
-    let heartCount = 0;
-    let copyCount = 0;
-    const history = []; // {nameEn, number, time}
+        let coins = 100;
+        let heartCount = 0;
+        let copyCount = 0;
+        const history = [];
 
-    // ====== DOM Refs ======
-    const cardGrid = document.getElementById('cardGrid');
-    const tpl = document.getElementById('cardTemplate');
-    const coinCountEl = document.getElementById('coinCount');
-    const heartCountEl = document.getElementById('heartCount');
-    const copyCountEl = document.getElementById('copyCount');
-    const historyList = document.getElementById('historyList');
-    const historyEmpty = document.getElementById('historyEmpty');
-    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        // ====== DOM Refs ======
+        const cardGrid = document.getElementById('cardGrid');
+        const tpl = document.getElementById('cardTemplate');
+        const coinCountEl = document.getElementById('coinCount');
+        const heartCountEl = document.getElementById('heartCount');
+        const copyCountEl = document.getElementById('copyCount');
+        const historyList = document.getElementById('historyList');
+        const historyEmpty = document.getElementById('historyEmpty');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
-    // ====== Render Cards ======
-    function renderCards() {
-      const frag = document.createDocumentFragment();
-      services.forEach(svc => {
-        const node = tpl.content.cloneNode(true);
-        const card = node.querySelector('.bg-white');
-        card.dataset.id = svc.id;
-        card.dataset.number = svc.number;
-        card.dataset.name = svc.nameEn;
+        // ====== Render Cards ======
+        function renderCards() {
+            const frag = document.createDocumentFragment();
+            services.forEach(svc => {
+                const node = tpl.content.cloneNode(true);
+                const card = node.querySelector('.bg-white');
+                card.dataset.id = svc.id;
+                card.dataset.number = svc.number;
+                card.dataset.name = svc.nameEn;
 
-        card.querySelector('.h-8.w-8').textContent = svc.icon;
-        card.querySelector('.nameBn').textContent = svc.nameBn;
-        card.querySelector('.nameEn').textContent = svc.nameEn;
-        card.querySelector('.number').textContent = svc.number;
-        card.querySelector('.cat').textContent = svc.category;
-        frag.appendChild(node);
-      });
-      cardGrid.appendChild(frag);
-    }
+                card.querySelector('.h-8.w-8').textContent = svc.icon;
+                card.querySelector('.nameBn').textContent = svc.nameBn;
+                card.querySelector('.nameEn').textContent = svc.nameEn;
+                card.querySelector('.number').textContent = svc.number;
+                card.querySelector('.cat').textContent = svc.category;
+                frag.appendChild(node);
+            });
+            cardGrid.appendChild(frag);
+        }
+        // ====== Utilities ======
+        function updateCounters() {
+            coinCountEl.textContent = coins;
+            heartCountEl.textContent = heartCount;
+            copyCountEl.textContent = copyCount;
+        }
 
+        function timeNow() {
+            return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        function pushHistory(name, number) {
+            history.unshift({ name, number, time: timeNow() });
+            renderHistory();
+        }
+
+        function renderHistory() {
+            historyList.innerHTML = '';
+            if (history.length === 0) {
+                historyEmpty.classList.remove('hidden');
+                return;
+            }
+            historyEmpty.classList.add('hidden');
+            const frag = document.createDocumentFragment();
+            history.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'py-2 flex items-center justify-between';
+                li.innerHTML = `
+          <div>
+            <p class="text-sm font-medium">${item.name}</p>
+            <p class="text-xs text-gray-500">${item.number}</p>
+          </div>
+          <span class="text-xs text-gray-400">${item.time}</span>
+        `;
+                frag.appendChild(li);
+            });
+            historyList.appendChild(frag);
+        }
+
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (err) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.left = '-9999px';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try { document.execCommand('copy'); } catch (_) { }
+                document.body.removeChild(ta);
+            }
+        }

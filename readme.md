@@ -10,9 +10,9 @@ Ans:
 2.getElementsByClassName: Finds all elements that have a certain class name. It gives a list of all the elements.
 
 3.querySelector:This finds the first element that matches any CSS selector wanted, like 
--class, 
--ID, 
--tag.
+1.class, 
+2.ID, 
+3.tag.
 
 4.querySelectorAll:It finds all the elements that matches the CSS selector and gives a list of them.
 
