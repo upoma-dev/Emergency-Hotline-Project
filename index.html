@@ -83,69 +83,112 @@
                 project for Bangladesh</p>
         </div>
     </section>
-      <!-- ================= MAIN LAYOUT ================= -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-6 grid gap-6 md:grid-cols-[1fr_320px]">
-    <!-- Cards Grid -->
-    <section id="cardGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></section>
+    <!-- ================= MAIN LAYOUT ================= -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-6 grid gap-6 md:grid-cols-[1fr_320px]">
+        <!-- Cards Grid -->
+        <section id="cardGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></section>
 
-    <!-- History Sidebar -->
-    <aside class="bg-white rounded-2xl p-4 soft-card h-max sticky top-20">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <h2 class="font-semibold">Call History</h2>
+        <!-- History Sidebar -->
+        <aside class="bg-white rounded-2xl p-4 soft-card h-max sticky top-20">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <h2 class="font-semibold">Call History</h2>
+                </div>
+                <button id="clearHistoryBtn"
+                    class="btn btn-ghost gap-2 px-3 py-1.5 bg-green-500 rounded-full text-gray-700"> Clear </button>
+            </div>
+            <ul id="historyList" class="mt-3 divide-y divide-gray-100">
+                <!-- history items injected here -->
+            </ul>
+            <p id="historyEmpty" class="mt-6 text-sm text-gray-500 text-center">No calls yet.</p>
+        </aside>
+    </main>
+
+    <template id="cardTemplate">
+        <div class="bg-white rounded-2xl p-4 soft-card flex flex-col gap-3">
+            <div class="flex items-center justify-between">
+                <div class="h-8 w-8 rounded-full bg-gray-100 grid place-items-center text-lg"></div>
+                <button class="likeBtn" title="Add to favourites">
+                    <span class="text-gray-400">♡</span>
+                </button>
+            </div>
+
+            <div class="space-y-0.5">
+                <h3 class="font-semibold text-gray-900 nameBn">—</h3>
+                <p class="text-sm text-gray-500 nameEn">—</p>
+            </div>
+
+            <div class="text-2xl font-extrabold number tracking-wide">—</div>
+            <div class="flex items-center gap-2">
+                <span class="badge cat">Category</span>
+            </div>
+
+            <div class="mt-2 flex gap-2">
+                <button class="btn btn-ghost shadow rounded-lg copyBtn flex-1" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class=" h-4 w-4 " viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                    Copy
+                </button>
+                <button class="btn btn-solid shadow bg-green-500 rounded-lg callBtn flex-1" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.66 12.66 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.66 12.66 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                    Call
+                </button>
+            </div>
         </div>
-        <button id="clearHistoryBtn" class="btn btn-ghost gap-2 px-3 py-1.5 bg-green-500 rounded-full text-gray-700"> Clear </button>
-      </div>
-      <ul id="historyList" class="mt-3 divide-y divide-gray-100">
-        <!-- history items injected here -->
-      </ul>
-      <p id="historyEmpty" class="mt-6 text-sm text-gray-500 text-center">No calls yet.</p>
-    </aside>
-  </main>
+    </template>
+    <script>
+        // ====== Data of services ======
+        const services = [
+            { id: '999', icon: '🚨', nameBn: 'National Emergency Number', nameEn: 'National Emergency Number', number: '999', category: 'All' },
+            { id: 'police', icon: '👮‍♂', nameBn: 'Police Helpline Number', nameEn: 'Police Helpline Number', number: '999', category: 'Police' },
+            { id: 'fire', icon: '🚒', nameBn: 'Fire Service Number', nameEn: 'Fire Service Number', number: '999', category: 'Fire' },
+            { id: 'ambulance', icon: '🚑', nameBn: 'Ambulance Service', nameEn: 'Ambulance Service', number: '1994-999999', category: 'Health' },
+            { id: 'women', icon: '🚨', nameBn: 'Women & Child Helpline', nameEn: 'Women & Child Helpline', number: '109', category: 'Help' },
+            { id: 'acc', icon: '🚨', nameBn: 'Anti-Corruption Helpline', nameEn: 'Anti-Corruption Helpline', number: '106', category: 'Govt.' },
+            { id: 'power', icon: '🚨', nameBn: 'Electricity Helpline', nameEn: 'Electricity Helpline', number: '16216', category: 'Electricity' },
+            { id: 'brac', icon: '🚨', nameBn: 'Brac Helpline', nameEn: 'Brac Helpline', number: '16445', category: 'NGO' },
+            { id: 'rail', icon: '🚨', nameBn: 'Bangladesh Railway Helpline', nameEn: 'Bangladesh Railway Helpline', number: '163', category: 'Travel' },
+        ];
+        // ====== State ======
+    let coins = 100;
+    let heartCount = 0;
+    let copyCount = 0;
+    const history = []; // {nameEn, number, time}
 
-  <template id="cardTemplate">
-    <div class="bg-white rounded-2xl p-4 soft-card flex flex-col gap-3">
-      <div class="flex items-center justify-between">
-        <div class="h-8 w-8 rounded-full bg-gray-100 grid place-items-center text-lg"></div>
-        <button class="likeBtn" title="Add to favourites">
-          <span class="text-gray-400">♡</span>
-        </button>
-      </div>
+    // ====== DOM Refs ======
+    const cardGrid = document.getElementById('cardGrid');
+    const tpl = document.getElementById('cardTemplate');
+    const coinCountEl = document.getElementById('coinCount');
+    const heartCountEl = document.getElementById('heartCount');
+    const copyCountEl = document.getElementById('copyCount');
+    const historyList = document.getElementById('historyList');
+    const historyEmpty = document.getElementById('historyEmpty');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
-      <div class="space-y-0.5">
-        <h3 class="font-semibold text-gray-900 nameBn">—</h3>
-        <p class="text-sm text-gray-500 nameEn">—</p>
-      </div>
+    // ====== Render Cards ======
+    function renderCards() {
+      const frag = document.createDocumentFragment();
+      services.forEach(svc => {
+        const node = tpl.content.cloneNode(true);
+        const card = node.querySelector('.bg-white');
+        card.dataset.id = svc.id;
+        card.dataset.number = svc.number;
+        card.dataset.name = svc.nameEn;
 
-      <div class="text-2xl font-extrabold number tracking-wide">—</div>
-      <div class="flex items-center gap-2">
-        <span class="badge cat">Category</span>
-      </div>
-
-      <div class="mt-2 flex gap-2">
-        <button class="btn btn-ghost shadow rounded-lg copyBtn flex-1" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" class=" h-4 w-4 " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy
-        </button>
-        <button class="btn btn-solid shadow bg-green-500 rounded-lg callBtn flex-1" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.66 12.66 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.66 12.66 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          Call
-        </button>
-      </div>
-    </div>
-  </template>
-  <script>
-       // ====== Data (at least 6 services) ======
-    const services = [
-      { id: '999', icon: '🚨', nameBn: 'National Emergency Number', nameEn: 'National Emergency Number', number: '999', category: 'All' },
-      { id: 'police', icon: '👮‍♂', nameBn: 'Police Helpline Number', nameEn: 'Police Helpline Number', number: '999', category: 'Police' },
-      { id: 'fire', icon: '🚒', nameBn: 'Fire Service Number', nameEn: 'Fire Service Number', number: '999', category: 'Fire' },
-      { id: 'ambulance', icon: '🚑', nameBn: 'Ambulance Service', nameEn: 'Ambulance Service', number: '1994-999999', category: 'Health' },
-      { id: 'women', icon: '🚨', nameBn: 'Women & Child Helpline', nameEn: 'Women & Child Helpline', number: '109', category: 'Help' },
-      { id: 'acc', icon: '🚨', nameBn: 'Anti-Corruption Helpline', nameEn: 'Anti-Corruption Helpline', number: '106', category: 'Govt.' },
-      { id: 'power', icon: '🚨', nameBn: 'Electricity Helpline', nameEn: 'Electricity Helpline', number: '16216', category: 'Electricity' },
-      { id: 'brac', icon: '🚨', nameBn: 'Brac Helpline', nameEn: 'Brac Helpline', number: '16445', category: 'NGO' },
-      { id: 'rail', icon: '🚨', nameBn: 'Bangladesh Railway Helpline', nameEn: 'Bangladesh Railway Helpline', number: '163', category: 'Travel' },
-    ];
-
+        card.querySelector('.h-8.w-8').textContent = svc.icon;
+        card.querySelector('.nameBn').textContent = svc.nameBn;
+        card.querySelector('.nameEn').textContent = svc.nameEn;
+        card.querySelector('.number').textContent = svc.number;
+        card.querySelector('.cat').textContent = svc.category;
+        frag.appendChild(node);
+      });
+      cardGrid.appendChild(frag);
+    }
 
